@@ -32,8 +32,3 @@ int pi_madhava_terms(void) {
 	return terms;
 }
 
-int main(void) {
-	printf("pi: %.15f, iters: %d\n", pi_madhava(), pi_madhava_terms());
-	
-	return 0;
-}
