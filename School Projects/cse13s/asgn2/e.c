@@ -20,7 +20,7 @@ double e(void) {
 
 int e_terms(void) {
     if (terms < 0) {
-	fprintf(stderr, "ERROR: e_terms not initialized\n");
+	fprintf(stderr, "ERROR: e() had not been previously called\n");
     	exit(EXIT_FAILURE);
     }
 
