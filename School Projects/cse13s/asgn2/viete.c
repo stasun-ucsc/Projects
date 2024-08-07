@@ -32,9 +32,3 @@ int pi_viete_factors(void) {
 	return factors;
 }
 
-int main(void) {
-	printf("pi: %.15f factors: %d\n", pi_viete(), pi_viete_factors());
-	
-	return 0;
-}
-

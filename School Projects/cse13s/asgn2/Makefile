@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wpedantic -Werror -Wextra -gdwarf-4
 all: mathlib-test
 
 mathlib-test: mathlib-test.o e.o bbp.o madhava.o euler.o viete.o newton.o
-	$(CC) -o mathlib-test mathlib-test.o e.o bbp.o madhava.o euler.o viete.o newton.o
+	$(CC) -o mathlib-test mathlib-test.o e.o bbp.o madhava.o euler.o viete.o newton.o 
 
 mathlib-test.o: mathlib-test.c
 	$(CC) $(CFLAGS) -c mathlib-test.c

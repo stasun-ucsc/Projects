@@ -31,8 +31,3 @@ int pi_bbp_terms(void) {
 	return terms;
 }
 
-int main(void) {
-	printf("pi: %.15f, iters: %d\n", pi_bbp(), pi_bbp_terms());
-
-	return 0;
-}
