@@ -66,57 +66,67 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	if (flags & 0x4000 != 0) {
+	if ((flags & 0x4000) != 0) {
 		flags |= 0x7f00;
 	}
 
 	double pi;
-	if (flags & 0x2000 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
+	if ((flags & 0x2000) != 0) {
+		double E = e();
+		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", E, M_E, absolute(E - M_E));
+		if ((flags & 0x0080) != 0) {
 			printf("e() terms = %d\n", e_terms());
 		}
 	}
 
-	if (flags & 0x0400 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
-			printf("e() terms = %d\n", e_terms());
+	if ((flags & 0x0400) != 0) {
+		pi = pi_euler();
+		printf("pi_euler() = %.15f, M_PI = %.15f, diff = %.15f\n", 
+			pi, M_PI, absolute(pi - M_PI));
+		if ((flags & 0x0080) != 0) {
+			printf("pi_euler() terms = %d\n", pi_euler_terms());
 		}
 	}
 
-	if (flags & 0x1000 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
-			printf("e() terms = %d\n", e_terms());
+	if ((flags & 0x1000) != 0) {
+		pi = pi_bbp();
+		printf("pi_bbp() = %.15f, M_PI = %.15f, diff = %.15f\n", 
+			pi, M_PI, absolute(pi - M_PI));
+		if ((flags & 0x0080) != 0) {
+			printf("pi_bbp() terms = %d\n", pi_bbp_terms());
 		}
 	}
 
-	if (flags & 0x0800 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
-			printf("e() terms = %d\n", e_terms());
+	if ((flags & 0x0800) != 0) {
+		pi = pi_madhava();
+		printf("pi_madhava() = %.15f, M_PI = %.15f, diff = %.15f\n",
+			pi, M_PI, absolute(pi - M_PI));
+		if ((flags & 0x0080) != 0) {
+			printf("pi_madhava() terms = %d\n", pi_madhava_terms());
 		}
 	}
 
-	if (flags & 0x0200 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
-			printf("e() terms = %d\n", e_terms());
+	if ((flags & 0x0200) != 0) {
+		pi = pi_viete();
+		printf("pi_viete() = %.15f, M_PI = %.15f, diff = %.15f\n",
+			pi, M_PI, absolute(pi - M_PI));
+		if ((flags & 0x0080) != 0) {
+			printf("pi_viete() terms = %d\n", pi_viete_factors());
 		}
 	}
 
-	if (flags & 0x0100 != 0) {
-		double e = e();
-		printf("e() = %.15f, M_E = %.15f, diff = %.15f\n", e, M_E, absolute(e - M_E));
-		if (flags & 0x0080 != 0) {
-			printf("e() terms = %d\n", e_terms());
-		}
+	if ((flags & 0x0100) != 0) {
+	    double calc;
+	    double root;
+	    for (double i = 0.0; i <= 10.0; i += 0.1) {
+	        calc = sqrt_newton(i);
+	        root = sqrt(i);
+	        printf("sqrt_newton(%.6f) = %.15f, sqrt(%.6f) = %.15f, diff = %.15f\n",
+	    	        i, calc, i, root, absolute(calc - root));
+	        if ((flags & 0x0080) != 0) {
+	    	    printf("sqrt_newton() terms = %d\n", sqrt_newton_iters());
+	        }
+	    }
 	}
 
 	return 0;
