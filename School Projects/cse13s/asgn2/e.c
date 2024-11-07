@@ -9,7 +9,7 @@ double e(void) {
     terms = 1;
     double prev_term = 1;
     double e = prev_term;
-    while (absolute(M_E - e) >= EPSILON) {
+    while (absolute(prev_term) >= EPSILON) {
     	prev_term *= (1.0/terms);
 	e += prev_term;
 	terms++;

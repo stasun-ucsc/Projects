@@ -8,8 +8,9 @@ static int terms = -1;
 double pi_bbp(void) {
 	terms = 0;
 	double summation = 0.0;
-	double next_term;
-	while (absolute(M_PI - summation) >= EPSILON) {
+	// arbitrary value greater than EPSILON so program enters while loop
+	double next_term = 4.0;	
+	while (absolute(next_term) >= EPSILON) {
 		next_term = (4.0 / (8.0 * terms + 1.0)) - (2.0 / (8.0 * terms + 4.0));
 		next_term -= ((1.0 / (8.0 * terms + 5.0)) + (1.0 / (8.0 * terms + 6.0)));
 		for (int i = 0; i < terms; i++) {

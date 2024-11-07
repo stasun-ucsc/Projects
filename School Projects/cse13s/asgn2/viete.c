@@ -12,7 +12,7 @@ double pi_viete(void) {
 	double product = prev_factor / 2;
 	double pi = 0.0;
 
-	while (absolute(M_PI - pi) >= EPSILON) {
+	while (absolute(1 - next_term) >= EPSILON) {
 		factors++;
 		prev_factor = sqrt_newton(2 + prev_factor);
 		next_term = prev_factor / 2;
