@@ -39,10 +39,18 @@ int filepath(int fd, char *buf, char *path) {
     int len = strlen(buf);
     path = (char *) calloc(len + 1, sizeof(char));
     strncpy(path, buf, len);
-    memmove(buf, buf + len + 1, BLOCK - len - 1);
+    if (len == BLOCK) {
+        memset(buf, 0, BLOCK);
+    } else {
+        int rem = BLOCK - len - 1;
+        memmove(buf, buf + len + 1, rem);
+        memset(buf + rem, 0, len + 1)
+    }
 
     return 0;
 }
+
+
 
 int main(void) {
     char *buf = (char *)calloc(BLOCK + 1, sizeof(char));	
