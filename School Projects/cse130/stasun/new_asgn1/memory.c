@@ -41,7 +41,7 @@ void field_init(char **fields, char *tok, int *tok_no) {
     return;
 }
 
-int main(void) {
+int main(int argc, char **argv) {
     bool gFlag = false, sFlag = false;
     char buf[BLOCK + 1] = {0};
     char *fields[3];
@@ -67,9 +67,13 @@ int main(void) {
 
         if (gFlag) {
             int fd = open(fields[1], O_RDONLY);
-            while (readBytes(fd, buf, BLOCK)) {
-                
+            int read;
+            while ((read = readBytes(fd, buf, BLOCK))) {
+                buf[read] = 0;
+                write_bytes(1, buf, read);
             }
+
+            return 0;
         }
     }
     // start off with input handling
