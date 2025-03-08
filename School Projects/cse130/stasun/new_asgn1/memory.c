@@ -5,55 +5,77 @@
 #include <limits.h>
 #include <string.h>
 
-#define BLOCK 4096
+#define BLOCK 8192
 
 // PATH_MAX = 4096
 
-int read_bytes(int fd, char *buf, int bytes) {
-    int readBytes = 0, temp = 0;
-    while (readBytes < bytes && (temp = read(fd, buf + readBytes, bytes - readBytes))) {
+int read_bytes(int infile, char *buf, int to_read) {
+    /* concerns with the buffer being overwritten */
+
+    int readBytes = 0;
+    int temp = 0;
+    while (readBytes < to_read && (temp = read(infile, buf + readBytes, to_read - readBytes)) > 0) {
         readBytes += temp;
     }
-
     return readBytes;
 }
 
-int method(int fd, char *buf) {
-    if (read_bytes(fd, buf, 4) < 0) {
-        return -2;
+int write_bytes(int outfile, uint8_t *buf, int to_write) {
+    /* concerns with the buffer being overwritten */
+
+    // same as read but with write()
+    int writtenBytes = 0;
+    int temp = 0;
+    while (writtenBytes < to_write && (temp = write(outfile, buf + writtenBytes, to_write - writtenBytes)) >= 0) {
+        /* printf("temp = %d\n", temp); */
+        writtenBytes += temp;
     }
-    if (strncmp(buf, "GET\n", 4) == 0) {
-        return 0;
-    } else if (strncmp(buf, "SET\n", 4) == 0) {
-        return 1;
-    } else {
-        return -1;
-    }
+    return writtenBytes;
 }
 
-int filepath(int fd, char *buf, char *path) {
-    if ((read_bytes(fd, buf, BLOCK)) < 0) {
-        return 1;    
-    }
-    strtok(buf, "\n");
-    int len = strlen(buf);
-    path = (char *) calloc(len + 1, sizeof(char));
-    strncpy(path, buf, len);
-    if (len == BLOCK) {
-        memset(buf, 0, BLOCK);
-    } else {
-        int rem = BLOCK - len - 1;
-        memmove(buf, buf + len + 1, rem);
-        memset(buf + rem, 0, len + 1)
-    }
+void field_init(char **fields, char *tok, int *tok_no) {
+    fields[tokens] = (char *)calloc(strlen(tok) + 1, sizeof(char));
+    strncpy(fields[tokens], tok, strlen(tok));
+    (*tok_no)++;
 
-    return 0;
+    return;
 }
-
-
 
 int main(void) {
-    char *buf = (char *)calloc(BLOCK + 1, sizeof(char));	
-    printf("ERROR\n");
-    return -1;
+    bool gFlag = false, sFlag = false;
+    char buf[BLOCK + 1] = {0};
+    char *fields[3];
+    int tokens = 0;
+    while (read_bytes(0, buf, BLOCK)) {
+        if (tokens == 0) {
+            char *tok = strtok(buf, "\n");
+            field_init(fields, tok, &tokens);
+            if (strncmp(fields[0], "GET", 4) == 0) {
+                gFlag = true;
+            } else if (strncmp(fields[0], "SET", 4) == 0) {
+                sFlag = true;
+            } else {
+                printf("Invalid method\n");
+                return -1
+            }
+        }
+        
+        while (tok != NULL && tokens < 3) {
+            tok = strtok(NULL, "\n");
+            field_init(fields, tok, &tokens);
+        }
+
+        if (gFlag) {
+            int fd = open(fields[1], O_RDONLY);
+            while (readBytes(fd, buf, BLOCK)) {
+                
+            }
+        }
+    }
+    // start off with input handling
+    // location_check();
+
+    // if set:
+    //  check_bytes();
 }
+
