@@ -41,6 +41,13 @@ void field_init(char **fields, char *tok, int *tok_no) {
     return;
 }
 
+void free_fields(char **fields, int tok_no) {
+    for (int i = 0; i < tok_no; i++) {
+        free(fields[i]);
+        fields[i] = NULL;
+    }
+}
+
 int main(int argc, char **argv) {
     bool gFlag = false, sFlag = false;
     char buf[BLOCK + 1] = {0};
@@ -49,31 +56,57 @@ int main(int argc, char **argv) {
     while (read_bytes(0, buf, BLOCK)) {
         if (tokens == 0) {
             char *tok = strtok(buf, "\n");
-            field_init(fields, tok, &tokens);
-            if (strncmp(fields[0], "GET", 4) == 0) {
-                gFlag = true;
-            } else if (strncmp(fields[0], "SET", 4) == 0) {
-                sFlag = true;
-            } else {
-                printf("Invalid method\n");
-                return -1
+            if (tok != NULL) {
+                field_init(fields, tok, &tokens);
+                if (strncmp(fields[0], "GET", 4) == 0) {
+                    gFlag = true;
+                } else if (strncmp(fields[0], "SET", 4) == 0) {
+                    sFlag = true;
+                } else {
+                    printf("Invalid method\n");
+                    return 1
+                }
             }
         }
+    
         
+        // this section seems kinda weird and can be rewritten
         while (tok != NULL && tokens < 3) {
             tok = strtok(NULL, "\n");
-            field_init(fields, tok, &tokens);
-        }
-
-        if (gFlag) {
-            int fd = open(fields[1], O_RDONLY);
-            int read;
-            while ((read = readBytes(fd, buf, BLOCK))) {
-                buf[read] = 0;
-                write_bytes(1, buf, read);
+            if (tok != NULL) {
+                field_init(fields, tok, &tokens);
             }
+        }
+    }
 
-            return 0;
+    if (gFlag) {
+        // need to check for the number of tokens?
+        int fd = open(fields[1], O_RDONLY);
+        int read;
+        while ((read = readBytes(fd, buf, BLOCK))) {
+            buf[read] = 0;
+            write_bytes(1, buf, read);
+        }
+        free_fields(fields, tokens);
+        close(fd)
+
+        return 0;
+    } else if (sFlag) {
+        // check for correct number of tokens?
+        int fd = open(fields[1], O_WRONLY | O_TRUNC | O_CREAT);
+        int len = atoi(fields[2]);
+        if (len == 0) {
+            // check if len is actually zero or invalid content length
+            for (int i = 0; i < strlen(fields[2]); i++) {
+                if (fields[2][i] != '0') {
+                    write_bytes(2, "Invalid Content Length\n", 24);
+                    return 1;
+                }
+            }
+        }
+        if ((tok + strlen(tok) + 1) - buf > BLOCK) {
+            // too tired to calculate how many bytes to write, fix later
+            write_bytes(1, tok + strlen(tok) + 1, BLOCK);
         }
     }
     // start off with input handling
