@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         // need to check for the number of tokens?
         int fd = open(fields[1], O_RDONLY);
         int read;
-        while ((read = readBytes(fd, buf, BLOCK))) {
+        while ((read = read_bytes(fd, buf, BLOCK))) {
             buf[read] = 0;
             write_bytes(1, buf, read);
         }
@@ -106,13 +106,25 @@ int main(int argc, char **argv) {
         }
         if ((tok + strlen(tok) + 1) - buf > BLOCK) {
             // too tired to calculate how many bytes to write, fix later
-            write_bytes(1, tok + strlen(tok) + 1, BLOCK);
+            char *data = tok + strlen(tok) + 1;
+            len -= write_bytes(fd, tok + strlen(tok) + 1, BLOCK - (int)(data - buf));
         }
-    }
-    // start off with input handling
-    // location_check();
+        while ((read = readBytes(fd, buf, BLOCK)) && len > 0) {
+            buf[read] = 0;
+            if (read > len) {
+                write_bytes(fd, buf, len);
+            } else {
+                write_bytes(fd, buf, read);
+            }
+            len -= read;
+        }
+        free_fields(fields, tokens);
+        close(fd);
 
-    // if set:
-    //  check_bytes();
+        return 0;
+    } else {
+        // somehow neither flag was set and it wasn't picked up earlier
+        return 1;
+    }
 }
 
